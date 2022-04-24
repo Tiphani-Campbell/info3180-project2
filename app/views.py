@@ -5,10 +5,18 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
-from app import app
-from flask import render_template, request, jsonify, send_file
+from app import app, db, login_manager
+from flask import request, jsonify, send_file
+from flask_login import login_user, logout_user, current_user, login_required
+from werkzeug.security import check_password_hash
+from app.models import User, Car, Favourite
+from app.forms import LoginForm, RegisterForm, CarForm, SearchForm
+from flask_wtf.csrf import generate_csrf
+from werkzeug.utils import secure_filename
 import os
-
+import datetime 
+import jwt
+import json
 
 ###
 # Routing for your application.
@@ -22,7 +30,39 @@ def index():
 ###
 # The functions below should be applicable to all Flask apps.
 ###
+@app.route('/api/register', methods=['POST'])
+def register():
+    regform = RegisterForm()
+    if regform.validate_on_submit():
+        username = regform.username.data
+        password = regform.password.data
+        name = regform.name.data
+        email = regform.email.data
+        location = regform.location.data
+        biography = regform.biography.data
+        photo = regform.photo.data
+        filename=secure_filename(photo.filename)
+        date_joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        user = User(username, password, name, email, location, biography, filename, date_joined)
+        db.session.add(user)
+        db.session.commit()
+        uid = db.session.query(User.id).all()[-1][0]
+        response= {
+                    "id": uid,
+                    "username": username,
+                    "name": name,
+                    "photo": filename,
+                    "email": email,
+                    "location": location,
+                    "biography": biography,
+                    "date_joined": date_joined
+                    }
+        return jsonify(response),200
+    return jsonify(error=form_errors(regform)),401  
 
+@app.route('/api/csrf-token', methods=['GET'])
+def get_csrf():
+    return jsonify({'csrf_token': generate_csrf()})
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use
 def form_errors(form):
