@@ -1,7 +1,7 @@
 <template>
- <div class="parentcard">
+ <div class="user-info">
         <div class="photo"> 
-            <img :src=user.photo :alt=user.username >
+            <img :src="`/uploads/${user.photo}`" :alt=user.username >
         </div>
         <div class="content"> 
             <h3>{{user.name}}</h3>
@@ -23,10 +23,10 @@
 
     <h3>Cars Favourited</h3>
         <div v-for= "car in cars" class="car__view">
-            <img class="car-photo" :src="`/uploads/${car.photo}`" :alt=car.car_type>
-                <div class="car-info"> <div>{{ car.year }} {{car.make}}</div> <div id="pricespan"><img src="../assets/price-tag.png" /> {{car.price}}</div></div>
+            <img class="car-photo" :src="car.photo" :alt=car.car_type>
+                <div class="car-info"> <div>{{ car.year }} {{car.make}}</div> <div id="price"><img src="../assets/price-tag.png" /> {{car.price}}</div></div>
                 <p class="card-model">{{car.model}}</p>
-                <button class="btn btn-primary" > <RouterLink :to="{path: '/cars/'+ car.id}" class="nav-link ">view more details</RouterLink> </button>
+                <button class="btn btn-primary" > <RouterLink :to="{path: '/cars/'+ car.id}" class="nav-link ">View more details</RouterLink> </button>
             </div>
 
 </template>
@@ -36,12 +36,14 @@ export default {
     data() {
         return {
             cars: [],
-            user:''
+            user:'',
+            message:''
         };
     },
     created() {
         let self = this;
-        fetch(`/api/users/${sessionStorage.getItem('uid')}`,
+        let status = 0;
+        fetch(`/api/users/${sessionStorage.getItem('user_id')}`,
         {
             method: 'GET',
             headers: {
@@ -55,7 +57,7 @@ export default {
         .then(function(data) {
             self.user = data;
         });
-        fetch(`/api/users/${sessionStorage.getItem('uid')}/favourites`,
+        fetch(`/api/users/${sessionStorage.getItem('user_id')}/favourites`,
         {
             method: 'GET',
             headers: {
@@ -64,10 +66,17 @@ export default {
             }
         })
         .then(function(response) {
+            status = response.status;
             return response.json();
         })
         .then(function(data) {
-            self.cars = data;
+            if(status==400){
+                self.message=data.message;
+                console.log(self.message);
+            }else{
+                self.cars = data;
+            }
+            
         });
     },
 };

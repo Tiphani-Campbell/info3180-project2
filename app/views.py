@@ -49,9 +49,9 @@ def register():
         user = User(username, password, name, email, location, biography, filename, date_joined)
         db.session.add(user)
         db.session.commit()
-        uid = db.session.query(User.id).all()[-1][0]
+        userid = db.session.query(User.id).all()[-1][0]
         response= {
-                    "id": uid,
+                    "id": userid,
                     "username": username,
                     "name": name,
                     "photo": filename,
@@ -159,7 +159,7 @@ def carview(car_id):
                 'make': car.make,
                 'model': car.model,
                 'colour':car.colour,
-                'transmission':car.trannsmission,
+                'transmission':car.transmission,
                 'car_type':car.car_type,
                 'price':locale.currency(car.price, grouping= True),
                 'photo':os.path.join(app.config['UPLOAD_FOLDER'], car.photo)[1:],
@@ -170,11 +170,12 @@ def carview(car_id):
         return jsonify({'message':'Invalid/missing token'}),401
     
 
-@app.route('/api/auth/logout', methods=['POST'])
+@app.route('/api/auth/logout', methods=['POST', 'GET'])
 @login_required
 def logout():
-    logout_user()
-    return jsonify({"message": "Log out successful"}),200
+    if request.method == 'GET':
+        logout_user()
+        return jsonify({"message": "Log out successful"}),200
 
 @login_manager.user_loader
 def load_user(id):
@@ -196,7 +197,7 @@ def user(user_id):
                 "id": returned.id,
                 "username": returned.username,
                 "name": returned.name,
-                "photo":  returned.photo[1:],
+                "photo":  returned.photo,
                 "email": returned.email,
                 "location": returned.location,
                 "biography": returned.biography,
@@ -269,7 +270,7 @@ def favourite(car_id):
     return jsonify({'message': 'Invalid/missing token'}),401
     
 
-@app.route('/api/user/<int:user_id>/favourites', methods=['GET'])
+@app.route('/api/users/<int:user_id>/favourites', methods=['GET'])
 @login_required
 def userfav(user_id):
     token= request.headers['Authorization'].split(' ')[1]
@@ -296,9 +297,44 @@ def userfav(user_id):
                     "user_id": car.user_id
                 }
                 cars.append(response)
-            return jsonify(cars),200
+            if len(cars) !=0:   
+             return jsonify(cars),200
+            return jsonify({'message': ''}),404
+
     return jsonify({'message': 'Invalid/missing token'}),401
 
+@app.route('/api/user_id', methods=['GET'])
+@login_required
+def userid():
+    token= request.headers['Authorization'].split(' ')[1]
+    if token:
+        decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        if decoded['sub'] == current_user.username:
+            decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            if decoded['sub'] == current_user.username:
+                if request.method == "GET":
+                    return jsonify({"message": current_user.id}),200
+    return jsonify({"message": "Access token is missing or invalid"}),401 
+
+@app.route('/api/viewfavourite/<int:car_id>', methods= ['GET'])
+@login_required
+def checkfavourite(car_id):
+    token= request.headers['Authorization'].split(' ')[1]
+    if token:
+        decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        if decoded['sub'] == current_user.username:
+            if request.method == "GET":
+                faved= False
+                favorites = Favourite.query.all()
+                for favourite in favorites:
+                    if favourite.user_id == current_user.id  and favourite.car_id == car_id:
+                        faved = True
+                if faved:
+                    return jsonify({"message": True}),200
+                else:
+                    return jsonify({"message": False}),200
+   
+    return jsonify({"message": False}),401
 
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use

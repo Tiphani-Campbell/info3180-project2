@@ -13,6 +13,7 @@
     </form>
 </template>
 <script>
+import { useRoute } from 'vue-router';
 export default {
     data(){
         return{
@@ -42,7 +43,22 @@ export default {
                       console.log(self.message.token);
                       sessionStorage.setItem('token', self.message.token);
                       sessionStorage.setItem('isauth', 'true');
-                      this.$router.push('/explore');
+                       fetch('/api/user_id', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                        }
+                        })
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(data) {
+                            sessionStorage.setItem('user_id', data.message);
+                            localStorage.setItem('user_id', data.message);
+                        });
+                        this.$router.push('/explore')
+
                   }
               })
         },
