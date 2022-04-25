@@ -12,31 +12,34 @@
    
     <h2>Register New User</h2>
     <form @submit.prevent="registerForm" method="POST" id="registerForm" enctype = "multipart/form-data">
-                <div class="form-group">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" name="username" id="username" >
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" id="username" >
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control"  name="password" id="password">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control"  name="password" id="password">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="name" class="form-label">Fullname</label>
+                        <input type="text" class="form-control"  name="name" id="name" >
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control"  name="email" id="email" >
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="name" class="form-label">Fullname</label>
-                    <input type="text" class="form-control"  name="name" id="name" >
-                </div>
-
-                <div class="form-group">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" class="form-control"  name="email" id="email" >
-                </div>
-
-               <div class="form-group">
+               <div class="form-group col-md-6">
                     <label for="location" class="form-label">Location</label>
                     <input type="text" class="form-control"  name="location" id="location" >
                 </div>
 
-            <div class="form-group">
+            <div class="form-group" >
                     <label for="Biography" class="form-label">Biography</label>
                     <textarea  class="form-control"  name="biography" id="Biography" ></textarea>
             </div>
@@ -106,5 +109,24 @@ export default{
 </script>
 
 <style>
+
+form{
+    width: 650px;
+    margin:0 30% 0 30%;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 2px rgb(106, 106, 106);
+    padding: 30px;
+}
+label{
+    margin-top: 5px;
+}
+.form-group{
+    margin: 5px 0px;
+}
+h2{
+    margin:0 30% 0 30%;
+    padding: 20px 0px 20px 0px;
+}
 
 </style>
