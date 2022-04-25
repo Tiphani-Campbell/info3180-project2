@@ -220,15 +220,13 @@ def search():
             if make =='' and model == '':
                 foundCars=Car.query.all()
             if make !='' and model =='':
-                foundCars = Car.query.filter_by(make=make)
+                foundCars = Car.query.filter_by(make=make).all()
             if make == '' and model != '':
-                foundCars = Car.query.filter_by(model=model)
+                foundCars = Car.query.filter_by(model=model).all()
             if make != '' and model != '':
-                foundCars= Car.query.filter_by(make=make)
+                foundCars= Car.query.filter_by(make=make).all()
             
             for x in foundCars:
-                if x in cars:
-                    continue
                 cars.append({
                     "id": x.id,
                     "description": x.description,
@@ -239,7 +237,7 @@ def search():
                     "transmission": x.transmission,
                     "car_type": x.car_type,
                     "price": locale.currency(x.price, grouping= True),
-                    "photo":  x.photo,
+                    "photo":  os.path.join(app.config['UPLOAD_FOLDER'], x.photo),
                     "user_id": x.user_id
                 })
             return jsonify(cars),200
@@ -252,19 +250,18 @@ def favourite(car_id):
     if token:
         decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
         if decoded['sub'] == current_user.username:
-            car = json.loads(request.data)
             faves = Favourite.query.all()
             for fav in faves:
-                if fav.user_id == car['user_id'] and fav.car_id==car['car_id']:
-                    Favourite.query.filter_by(car_id=car['car_id'], user_id = car['user_id']).delete()
+                if fav.user_id == current_user.id  and fav.car_id == car_id:
+                    Favourite.query.filter_by(car_id=car_id, user_id = current_user.id).delete()
                     db.session.commit()
-                    return jsonify({"message": "Car removed from Favourites"}),200
-            favourite = Favourite(car['car_id'], car['user_id'])
+                    return jsonify({"message": "Car removed from Favourites"}),201
+            favourite = Favourite(car_id, current_user.id)
             db.session.add(favourite)
-            db.seesion.commit()
+            db.session.commit()
             response={
                 "message": "Car Successfully Favourited",
-                "car_id": car['car_id']
+                "car_id": car_id
             }
             return jsonify(response),200
     return jsonify({'message': 'Invalid/missing token'}),401
