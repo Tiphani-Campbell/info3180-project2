@@ -3,11 +3,11 @@
     <form @submit.prevent="searchCar" id="searchForm" method="GET">
         <div class="form-group">
             <label for="make">Make</label>
-            <input type="text" class="form-control" name="make" id="make">
+            <input type="text" class="form-control" v-model="searchMake" name="make" id="make">
         </div>
         <div class="form-group">
             <label for="model">Model</label>
-            <input type="text" class="form-control" name="model" id="make">
+            <input type="text" class="form-control" v-model="searchModel" name="model" id="make">
         </div>
         <button type="submit" class="btn btn-success" id="searchBtn">Search</button>
     </form>
@@ -36,7 +36,7 @@ export default {
     methods: {
        searchCar(){
             let self = this;
-            fetch('/api/search?make='+this.make+'&model='+this.model,{
+            fetch('/api/search?make='+this.searchMake+'&model='+this.searchModel,{
                 method: 'GET',
                 headers:{
                     'Accept': 'application/json',

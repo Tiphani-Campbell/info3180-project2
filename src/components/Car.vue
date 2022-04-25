@@ -48,16 +48,13 @@ export default {
                 return response.json();
             })
             .then(function(data) {
-                self.car = data
+                self.car = data;
+                console.log(data);
             });
           
             fetch(`/api/cars/${this.$route.params.car_id}/favourite`,
             {
                 method: 'POST',
-                body: JSON.stringify({
-                    "car_id": self.car.id,
-                    "user_id": self.car.user_id
-                }),
                 headers: {
                     'Accept': 'application/json',
                     'X-CSRFToken': this.csrf_token,
