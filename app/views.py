@@ -42,6 +42,7 @@ def register():
         biography = regform.biography.data
         photo = regform.photo.data
         filename=secure_filename(photo.filename)
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         date_joined = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         user = User(username, password, name, email, location, biography, filename, date_joined)
         db.session.add(user)
@@ -57,12 +58,64 @@ def register():
                     "biography": biography,
                     "date_joined": date_joined
                     }
-        return jsonify(response),200
+        return jsonify(response),201
     return jsonify(error=form_errors(regform)),401  
+
+@app.route('/api/auth/login', methods=['POST'])
+def login():
+    loginForm = LoginForm()
+    if loginForm.validate_on_submit():
+        username = loginForm.username.data
+        password = loginForm.password.data
+        user = User.query.filter_by(username=username).first()
+        if user is not None and check_password_hash(user.password, password):
+            login_user(user)
+            tokentime = datetime.datetime.utcnow().strftime("%H:%M:%S")
+            token  = jwt.encode({'sub':username,'initime': tokentime}, app.config.get('SECRET_KEY'),algorithm='HS256')
+            return jsonify({
+                    "message": "Login Successful",
+                    "token": token
+                }),200
+        
+        return jsonify({"message": "Login failed, check your credentials"}),401
+
+@app.route('/api/auth/logout', methods=['GET'])
+@login_required
+def logout():
+        if request.method == 'GET':
+            logout_user()
+            return jsonify({
+                "message": "Log out successful"
+            }),200
+
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 @app.route('/api/csrf-token', methods=['GET'])
 def get_csrf():
     return jsonify({'csrf_token': generate_csrf()})
+
+@app.route('/api/users/<int:user_id>', methods=['GET'])
+@login_required
+def user(user_id):
+    token= request.headers['Authorization'].split(' ')[1]
+    if token:
+        decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        if decoded['sub'] == current_user.username:
+            returned = User.query.filter_by(id=user_id).first()
+            user = {
+                "id": returned.id,
+                "username": returned.username,
+                "name": returned.name,
+                "photo": os.path.join(app.config['UPLOAD_FOLDER'], returned.photo)[1:],
+                "email": returned.email,
+                "location": returned.location,
+                "biography": returned.biography,
+                "date_joined": returned.date_joined
+            }
+            return jsonify(user),200
+        return jsonify({"message": "Invalid/missing token"}),401
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use
 def form_errors(form):
