@@ -9,7 +9,7 @@
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" name="password" id="password">
         </div>
-        <button type="submit" class="btn btn-success">Login</button>
+        <button type="submit" class="btn btn-success" id="login">Login</button>
     </form>
 </template>
 <script>
@@ -64,3 +64,28 @@ export default {
     
 }
 </script>
+<style>
+
+#login-form{
+    width: fit-content;
+    margin:0 30% 0 30%;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 2px rgb(106, 106, 106);
+    padding: 30px;
+}
+label{
+    margin-top: 5px;
+}
+#login{
+    margin: 5%;
+    width: 90%;
+}
+.form-group{
+    margin: 5px 0px;
+}
+h2{
+    margin:0 30% 0 30%;
+    padding: 20px 0px 20px 0px;
+}
+</style>

@@ -31,6 +31,7 @@ export default {
 .home-container{
   display: flex;
   align-items: center;
+  background-color: white;
   justify-content: center;
   text-align: center;
   margin:0px;

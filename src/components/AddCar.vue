@@ -10,31 +10,35 @@
 
       <h2>Add New Car</h2>
         <form @submit.prevent="addCar" method="POST" id="carForm" enctype = "multipart/form-data">
-            <div class="form-group">
-                <label for="make" class="form-label">Make</label>
-                <input type="text" class="form-control" name="make" id="make" >
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="make" class="form-label">Make</label>
+                    <input type="text" class="form-control" name="make" id="make" >
+                </div>
+           
+                <div class="form-group col-md-6">
+                    <label for="model" class="form-label">Model</label>
+                    <input type="text" class="form-control"  name="model" id="model">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="model" class="form-label">Model</label>
-                <input type="text" class="form-control"  name="model" id="model">
-            </div>
-
-                <div class="form-group">
+            <div class="row">
+                <div class="form-group col-md-6">
                     <label for="colour" class="form-label">Colour</label>
                     <input type="text" class="form-control"  name="colour" id="colour" >
                 </div>
 
-                <div class="form-group">
+                <div class="form-group col-md-6">
                     <label for="year" class="form-label">Year</label>
                     <input type="year" class="form-control"  name="year" id="year" >
                 </div>
-
-                <div class="form-group">
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
                     <label for="colour" class="form-label">Price</label>
                     <input type="text" class="form-control"  name="price" id="price" >
                 </div>
 
-                <div class="form-group">
+                <div class="form-group col-md-6">
                     <label class="form-label" for="type">Car Type</label>
                     <select class="form-control" id="type" name="type">
                     <option>Hatchback</option>
@@ -43,6 +47,7 @@
                     <option>Truck</option>
                     </select>
                 </div>
+            </div>
 
             <div class="form-group">
                 <label class="form-label" for="transmission">Transmission</label>
@@ -163,5 +168,24 @@ h3{
     width: 100%;
   }
   
+}
+
+form{
+    width: 650px;
+    margin:0 30% 0 30%;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 2px rgb(106, 106, 106);
+    padding: 30px;
+}
+label{
+    margin-top: 5px;
+}
+.form-group{
+    margin: 5px 0px;
+}
+h2{
+    margin:0 30% 0 30%;
+    padding: 20px 0px 20px 0px;
 }
 </style>
