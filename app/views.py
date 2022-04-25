@@ -102,9 +102,9 @@ def view_add_cars():
                         "model": car.model,
                         "colour": car.colour,
                         "transmission": car.transmission,
-                        "car_type": car.type,
+                        "car_type": car.car_type,
                         "price": locale.currency(car.price, grouping= True),
-                        "photo": os.path.join(app.config['UPLOAD_FOLDER'], car.photo),
+                        "photo":  os.path.join(app.config['UPLOAD_FOLDER'],car.photo),
                         "user_id": current_user.id
                     })
                 return jsonify(retcars),200
@@ -142,7 +142,32 @@ def view_add_cars():
                 else:
                     return(jsonify(error=form_errors(carform))),401
     else:
-     return jsonify({"message": "Access token is missing or invalid"}),401                   
+     return jsonify({"message": "Invalid/missing token"}),401   
+
+@app.route('/api/cars/<int:car_id>', methods=['GET'])
+@login_required
+def carview(car_id):
+    token= request.headers['Authorization'].split(' ')[1]
+    if token:
+        decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        if decoded['sub'] == current_user.username:
+            car = Car.query.filter_by(id=car_id).first()
+            response={
+                'id': car.id,
+                'description': car.description,
+                'year': car.year,
+                'make': car.make,
+                'model': car.model,
+                'colour':car.colour,
+                'transmission':car.trannsmission,
+                'car_type':car.car_type,
+                'price':locale.currency(car.price, grouping= True),
+                'photo':os.path.join(app.config['UPLOAD_FOLDER'], car.photo)[1:],
+                'user_id': car.user_id
+            }
+            return jsonify(response),200
+    else:
+        return jsonify({'message':'Invalid/missing token'}),401
     
 
 @app.route('/api/auth/logout', methods=['POST'])
@@ -171,7 +196,7 @@ def user(user_id):
                 "id": returned.id,
                 "username": returned.username,
                 "name": returned.name,
-                "photo": os.path.join(app.config['UPLOAD_FOLDER'], returned.photo)[1:],
+                "photo":  returned.photo[1:],
                 "email": returned.email,
                 "location": returned.location,
                 "biography": returned.biography,
@@ -179,6 +204,102 @@ def user(user_id):
             }
             return jsonify(user),200
         return jsonify({"message": "Invalid/missing token"}),401
+
+@app.route('/api/search', methods=['GET'])
+@login_required
+def search():
+    token= request.headers['Authorization'].split(' ')[1]
+    if token:
+        decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        if decoded['sub'] == current_user.username:
+            params = request.args
+            make = params.get('make')
+            model = params.get('model')
+            cars=[]
+            if make =='' and model == '':
+                foundCars=Car.query.all()
+            if make !='' and model =='':
+                foundCars = Car.query.filter_by(make=make)
+            if make == '' and model != '':
+                foundCars = Car.query.filter_by(model=model)
+            if make != '' and model != '':
+                foundCars= Car.query.filter_by(make=make)
+            
+            for x in foundCars:
+                if x in cars:
+                    continue
+                cars.append({
+                    "id": x.id,
+                    "description": x.description,
+                    "year": x.year,
+                    "make": x.make,
+                    "model": x.model,
+                    "colour": x.colour,
+                    "transmission": x.transmission,
+                    "car_type": x.car_type,
+                    "price": locale.currency(x.price, grouping= True),
+                    "photo":  x.photo,
+                    "user_id": x.user_id
+                })
+            return jsonify(cars),200
+    return jsonify({'message':'Invalid/missing token'}),401
+
+@app.route('/api/cars/<int:car_id>/favourite', methods=['POST'])
+@login_required
+def favourite(car_id):
+    token= request.headers['Authorization'].split(' ')[1]
+    if token:
+        decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        if decoded['sub'] == current_user.username:
+            car = json.loads(request.data)
+            faves = Favourite.query.all()
+            for fav in faves:
+                if fav.user_id == car['user_id'] and fav.car_id==car['car_id']:
+                    Favourite.query.filter_by(car_id=car['car_id'], user_id = car['user_id']).delete()
+                    db.session.commit()
+                    return jsonify({"message": "Car removed from Favourites"}),200
+            favourite = Favourite(car['car_id'], car['user_id'])
+            db.session.add(favourite)
+            db.seesion.commit()
+            response={
+                "message": "Car Successfully Favourited",
+                "car_id": car['car_id']
+            }
+            return jsonify(response),200
+    return jsonify({'message': 'Invalid/missing token'}),401
+    
+
+@app.route('/api/user/<int:user_id>/favourites', methods=['GET'])
+@login_required
+def userfav(user_id):
+    token= request.headers['Authorization'].split(' ')[1]
+    if token:
+        decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        if decoded['sub'] == current_user.username:
+            cars=[]
+            faves = Favourite.query.filter_by(user_id=user_id).all()
+            for fav in faves:
+                car = Car.query.filter_by(id=fav.car_id).first()
+                if car in cars:
+                    continue
+                response={
+                    "id": car.id,
+                    "description": car.description,
+                    "year": car.year,
+                    "make": car.make,
+                    "model": car.model,
+                    "colour": car.colour,
+                    "transmission": car.transmission,
+                    "car_type": car.car_type,
+                    "price": locale.currency(car.price, grouping= True),
+                    "photo": os.path.join(app.config['UPLOAD_FOLDER'], car.photo)[1:],
+                    "user_id": car.user_id
+                }
+                cars.append(response)
+            return jsonify(cars),200
+    return jsonify({'message': 'Invalid/missing token'}),401
+
+
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use
 def form_errors(form):
