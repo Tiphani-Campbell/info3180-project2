@@ -1,7 +1,7 @@
 # Add any form classes for Flask-WTF here
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, TextAreaField, EmailField, PasswordField, SelectField, DecimalField
+from wtforms import StringField, TextAreaField, EmailField, PasswordField, SelectField
 from wtforms.validators import DataRequired, Email, InputRequired
 
 
@@ -23,7 +23,7 @@ class CarForm(FlaskForm):
     model = StringField('Model', validators=[InputRequired()])
     colour = StringField("Colour", validators=[DataRequired()])
     year = StringField("Year", validators=[DataRequired()])
-    price = DecimalField('Price', validators=[DataRequired()])
+    price = StringField('Price', validators=[DataRequired()])
     type = SelectField('Car Type', validators=[DataRequired()], choices=[('SUV', 'SUV'), ('Truck', 'Truck'), ('Sedan', 'Sedan'), ('Hatchback', 'Hatchback')])
     transmission = SelectField('Transmission', choices=[('Automatic', 'Automatic'), ('Manual', 'Manual')])
     description = TextAreaField("Description", validators=[DataRequired()])

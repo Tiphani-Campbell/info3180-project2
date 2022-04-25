@@ -39,6 +39,7 @@ export default {
               .then((data)=>{
                   self.message=data;
                   if (status == 200){
+                      console.log(self.message.token);
                       sessionStorage.setItem('token', self.message.token);
                       sessionStorage.setItem('isauth', 'true');
                       this.$router.push('/explore');

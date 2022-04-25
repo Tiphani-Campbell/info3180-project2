@@ -17,6 +17,8 @@ import os
 import datetime 
 import jwt
 import json
+import locale
+locale.setlocale( locale.LC_ALL, 'en_CA.UTF-8' )
 
 ###
 # Routing for your application.
@@ -61,6 +63,8 @@ def register():
         return jsonify(response),201
     return jsonify(error=form_errors(regform)),401  
 
+
+
 @app.route('/api/auth/login', methods=['POST'])
 def login():
     loginForm = LoginForm()
@@ -79,14 +83,73 @@ def login():
         
         return jsonify({"message": "Login failed, check your credentials"}),401
 
-@app.route('/api/auth/logout', methods=['GET'])
+@app.route('/api/cars', methods=['GET','POST'])
+@login_required
+def view_add_cars():
+    token= request.headers['Authorization'].split(' ')[1]
+    if token:
+        decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        if decoded['sub'] == current_user.username:
+            if request.method == "GET":
+                cars = db.session.query(Car).limit(3).all()
+                retcars =[]
+                for car in cars:
+                    retcars.append({
+                        "id": car.id,
+                        "description": car.description,
+                        "year": car.year,
+                        "make": car.make,
+                        "model": car.model,
+                        "colour": car.colour,
+                        "transmission": car.transmission,
+                        "car_type": car.type,
+                        "price": locale.currency(car.price, grouping= True),
+                        "photo": os.path.join(app.config['UPLOAD_FOLDER'], car.photo),
+                        "user_id": current_user.id
+                    })
+                return jsonify(retcars),200
+            elif request.method == "POST":
+                carform = CarForm()
+                if carform.validate_on_submit():
+                    make = carform.make.data
+                    model = carform.model.data
+                    colour = carform.colour.data
+                    year = carform.year.data
+                    price= carform.price.data
+                    car_type= carform.type.data
+                    transmission= carform.transmission.data
+                    description = carform.description.data
+                    photo = carform.photo.data
+                    filename = secure_filename(photo.filename)
+                    photo.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+                    user_id = current_user.id
+                    car = Car(description, make, model, colour, year, transmission, car_type, price, filename, user_id)
+                    db.session.add(car)
+                    db.session.commit()
+                    response={
+                        'description':description,
+                        'year':year,
+                        'make':make,
+                        'model':model,
+                        'colour':colour,
+                        'transmission':transmission,
+                        'type': car_type,
+                        'price':price,
+                        'photo':filename,
+                        'user_id':user_id,                        
+                    }
+                    return(jsonify(response)),201
+                else:
+                    return(jsonify(error=form_errors(carform))),401
+    else:
+     return jsonify({"message": "Access token is missing or invalid"}),401                   
+    
+
+@app.route('/api/auth/logout', methods=['POST'])
 @login_required
 def logout():
-        if request.method == 'GET':
-            logout_user()
-            return jsonify({
-                "message": "Log out successful"
-            }),200
+    logout_user()
+    return jsonify({"message": "Log out successful"}),200
 
 @login_manager.user_loader
 def load_user(id):
