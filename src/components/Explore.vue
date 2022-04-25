@@ -13,23 +13,28 @@
     </form>
 
     <div v-for="car in cars" class="car-view">
-        <img :src="`/uploads/${car.photo}`" :alt="car.car_type"><br>
-        {{ car.year }} <h4>{{ car.make }}</h4> {{ car.price }}<br>
+        <div class="car-item">
+        <img :src="car.photo" :alt="car.car_type" class="car-image">
+        <div class="car-info">
+        {{ car.year }} <h4>{{ car.make }}</h4> {{ car.price }}
         {{ car.model }}
+        </div>
         <button v-on:click="viewCar(car.id)" class="btn btn-primary" id="details">View more details</button>
+        </div>
     </div>
 </template>
+
 <script>
 export default {
-    data(){
-        return{
+    data() {
+        return {
             cars: [],
-            model:'',
-            make: ''
+            searchMake: '',
+            searchModel: ''
         };
     },
-    methods:{
-        searchCar(){
+    methods: {
+       searchCar(){
             let self = this;
             fetch('/api/search?make='+this.make+'&model='+this.model,{
                 method: 'GET',
@@ -51,24 +56,49 @@ export default {
                    
         
     },
-    created(){
-        fetch('/api/cars',{
+    created() {
+        let self = this;
+        fetch('/api/cars',
+        {
             method: 'GET',
-            headers:{
+            headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
             }
         })
-        .then(function(response){
+        .then(function(response) {
             return response.json();
         })
-        .then(function(data){
+        .then(function(data) {
             console.log(data);
             self.cars = data;
-        })
-    }
+        });
+    },
 };
 </script>
-<style>
 
+<style>
+form{
+    width: max-width;
+    margin:0 30% 0 30%;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 2px rgb(106, 106, 106);
+    padding: 30px;
+}
+label{
+    margin-top: 5px;
+}
+.form-group{
+    margin: 2px 0px;
+}
+h2{
+    margin:0 30% 0 30%;
+    padding: 20px 0px 20px 0px;
+}
+.car-view{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 16px;
+}
 </style>

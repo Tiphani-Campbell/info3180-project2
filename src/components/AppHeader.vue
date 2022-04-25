@@ -16,27 +16,24 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent" >
           <ul class="navbar-nav">
-            <li  id="addcar" v-if="`${isauth}` == 'true'" class="nav-item" >
+            <li  id="addcar" v-if="user_id !=null" class="nav-item" >
               <RouterLink class="nav-link" to="/cars/new">Add Car</RouterLink>
             </li>
 
-            <li id="explore" v-if="`${isauth}` == 'true'" class="nav-item" >
+            <li id="explore" v-if="user_id !=null" class="nav-item" >
               <RouterLink class="nav-link" to="/explore">Explore</RouterLink>
             </li>
 
-            <li id="profile" v-if="`${isauth}` == 'true'" class="nav-item">
-              <RouterLink class="nav-link" :to="{path: '/users/'+ uid}" >My Profile</RouterLink>
+            <li id="profile" v-if="user_id !=null" class="nav-item">
+              <RouterLink class="nav-link" :to="{path: '/users/'+ user_id}" >My Profile</RouterLink>
             </li>
-            <li id="logout" v-if="`${isauth}` == 'true'" class="nav-item">
+            <li id="logout" v-if="user_id !=null" class="nav-item">
               <RouterLink class="nav-link" to="/logout">Logout</RouterLink>
             </li>
-            <li id="login" v-else>
+            <li id="login" v-if="user_id ==null" class="nav-item">
              <RouterLink class="nav-link" to="/login">Login</RouterLink>
             </li>
-
-            <li id="logout" v-if="`${isauth}` == 'true'" class="nav-item">
-            </li>
-            <li id="login" v-else>
+            <li id="login" v-if="user_id ==null" class="nav-item">
             <RouterLink class="nav-link" to="/register">Register</RouterLink>
             </li>
             
@@ -52,15 +49,15 @@ import { RouterLink } from "vue-router";
 export default {
     data() {
         return {
-          uid: sessionStorage.getItem('uid'),
-          isauth: localStorage.getItem('authed')
+          user_id: sessionStorage.getItem('user_id'),
         };
     },
     created(){
     let self = this;
     setInterval(()=>{
-       self.isauth = localStorage.getItem('authed');
-    }, 4000);
+       self.isauth = sessionStorage.getItem('isauth');
+    }, 2000);
+
     
     }
 }
@@ -68,11 +65,11 @@ export default {
 
 <style>
 /* Add any component specific styles here */
-.collapse{
-  margin:0 0% 0% 71%;
-
+header{
+  margin-bottom: 0;
 }
 .logo{
-  margin:0 20px;
+  width: 1.25rem;
+  margin: 0 1em 0 1em;
 }
 </style>

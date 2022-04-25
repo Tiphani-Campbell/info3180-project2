@@ -19,9 +19,9 @@ export default {
                 return response.json();
             })
             .then((data)=>{
-                sessionStorage.clear();
-                localStorage.setItem('authed', false);
                 this.$router.push('/');
+                sessionStorage.clear();
+                
             })
         },
         getCsrfToken() {
