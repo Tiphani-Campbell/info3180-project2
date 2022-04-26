@@ -165,8 +165,6 @@ export default {
     padding:10px;
     height: fit-content;
     min-height: calc(100vh - 60px);
-    display: flex;
-    
 }
 .card-container{
     margin:9vh 40vh;
@@ -193,7 +191,7 @@ export default {
     min-width: 100%;
     min-height: 100%;
 }
-.info{
+.card-container .info{
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
@@ -220,7 +218,7 @@ export default {
 }
 .car-container .label{
     color: rgb(107, 107, 107);
-    font-weight: 500;
+    font-weight: 600;
     width: max-content;
 }
 .car-container div{
