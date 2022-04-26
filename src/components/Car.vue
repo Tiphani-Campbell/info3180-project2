@@ -5,23 +5,35 @@
             <img :src="car.photo" :alt=car.car_type >
         </div>
         <div class="content"> 
-            <h3> {{car.year}} {{car.make}}</h3>
-            <br>
-            {{car.model}}
-            <p>{{car.description}}</p>
-            <div class="info">
-                <div><label>Color</label> <div id="colour">{{car.colour}}</div></div>
-                <div><label>Body Type</label> <div id="type">{{car.car_type}}</div></div>
-            </div>
-            <div class="info">
-                <div><label>Price</label> <div id="price"> {{car.price}} </div></div>
-                <div><label>Transmission</label> <div id="transmission">{{car.transmission}}</div></div>
-            </div>
+                <h3> {{car.year}} {{car.make}}</h3>
+                <br>
+                <h5>{{car.model}}</h5>
+                <p>{{car.description}}</p>
+                <div class="info">
+                    <div id="colour" class="section">
+                        <div class="label">Color</div> 
+                        <div >{{car.colour}}</div>
+                    </div>
+                    <div id="type" class="section">
+                        <div class="label">Body Type </div> 
+                        <div>{{car.car_type}}</div>
+                    </div>
+                </div>
+                <div class="info">
+                    <div id="price" class="section">
+                        <div class="label">Price </div> 
+                        <div>{{car.price}}</div>
+                    </div>
+                    <div id="transmission" class="section">
+                        <div class="label">Transmission </div> 
+                        <div>{{car.transmission}}</div>
+                    </div>
+                </div>
 
-            <div  id="email" class="info">
-                <button type="submit" class="btn btn-success" >Email Owner</button>
-                <button id="faveBtn" type="submit" v-on:click="addfave" class="btn" ><img class="unfavourited" src="../assets/heart.svg"></button>
-            </div>
+                <div  id="email" class="info">
+                    <button type="submit" class="btn btn-success" >Email Owner</button>
+                    <button id="faveBtn" type="submit" v-on:click="addfave" class="btn" ><img class="unfavourited" src="../assets/heart.svg"></button>
+                </div>
         </div>
     </div>
  </div>
@@ -157,8 +169,8 @@ export default {
     
 }
 .card-container{
-    margin:5vh 15%;
-    width:70%;
+    margin:9vh 40vh;
+    width:65%;
     height: calc(100vh - 200px);
     background-color: white;
     display: flex;
@@ -168,16 +180,70 @@ export default {
 }
 .card-container .image{
     height:100%;
-    width: 50%;
+    width:45%;
     overflow: hidden;
 }
 .card-container .content{
     height:100%;
-    width: 50%;
+    width: 55%;
     overflow: hidden;
+    padding:40px;
 }
 .card-container img{
     min-width: 100%;
     min-height: 100%;
+}
+.info{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.section{
+    display:flex;
+}
+.card-container h3{
+     margin:-12px;
+     margin-left:0px;
+     padding:0px;
+}
+.card-container h5{
+     margin-top:-7px;
+     margin-bottom: 30px;
+     padding:0px;
+     font-weight: 700;
+     color: rgb(107, 107, 107);
+}
+.car-container p{
+    text-align:left;
+    margin:0;
+    margin-bottom:20px;
+    color: rgb(107, 107, 107);
+}
+.car-container .label{
+    color: rgb(107, 107, 107);
+    font-weight: 500;
+    width: max-content;
+}
+.car-container div{
+    margin-right:25px;
+}
+#email{
+    margin-top: 55%;
+    gap: 50%;
+
+}
+#faveBtn{
+    height:40px;
+    width: 40px;
+    padding:1px;
+    box-shadow: 0px 0px 5px 1px rgb(167, 167, 167);
+    border-radius: 100%;
+}
+.favourited{
+    filter: invert(19%) sepia(83%) saturate(7219%) hue-rotate(358deg) brightness(111%) contrast(122%);
+    width: 2em;
+}
+.unfavourited{
+    filter: grayscale(100%);
+    width: 2em;
 }
 </style>
