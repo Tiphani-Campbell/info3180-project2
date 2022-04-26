@@ -1,5 +1,5 @@
 <template>
-    <h2>Login to your account</h2>
+    <h2 id="loginh">Login to your account</h2>
     <form @submit.prevent="login" id="loginForm" method = 'POST'>
         <div class="form-group">
             <label for="username" class="form-label">Username</label>
@@ -82,9 +82,9 @@ export default {
 </script>
 
 <style>
-    #loginform{
-        width: fit-content;
-        margin:0 30% 0 30%;
+    #loginForm{
+        width: 400px;
+        margin:0 35% 0 35%;
         background-color: white;
         border-radius: 10px;
         box-shadow: 0px 0px 10px 2px rgb(106, 106, 106);
@@ -97,11 +97,11 @@ export default {
         margin: 5%;
         width: 90%;
     }
-    .form-group{
-        margin: 5px 0px;
+    #loginForm .form-group{
+        margin: 15px 0px;
     }
-    h2{
-        margin:0 30% 0 30%;
+   #loginh{
+        margin:0 35% 0 35%;
         padding: 20px 0px 20px 0px;
     }
 </style>

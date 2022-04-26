@@ -1,25 +1,28 @@
 <template>
- <div class="image">
-    <img :src="car.photo" :alt=car.car_type >
-    <div class="content"> 
-        <h3> {{car.year}} {{car.make}}</h3>
-        <br>
-        {{car.model}}
-        <p>{{car.description}}</p>
-        <div class="info">
-            <div><label>Color</label> <div id="colour">{{car.colour}}</div></div>
-            <div><label>Body Type</label> <div id="type">{{car.car_type}}</div></div>
+<div class="car-container">
+    <div class="card-container">
+        <div class="image">
+            <img :src="car.photo" :alt=car.car_type >
         </div>
-        <div class="info">
-            <div><label>Price</label> <div id="price"> {{car.price}} </div></div>
-            <div><label>Transmission</label> <div id="transmission">{{car.transmission}}</div></div>
-        </div>
+        <div class="content"> 
+            <h3> {{car.year}} {{car.make}}</h3>
+            <br>
+            {{car.model}}
+            <p>{{car.description}}</p>
+            <div class="info">
+                <div><label>Color</label> <div id="colour">{{car.colour}}</div></div>
+                <div><label>Body Type</label> <div id="type">{{car.car_type}}</div></div>
+            </div>
+            <div class="info">
+                <div><label>Price</label> <div id="price"> {{car.price}} </div></div>
+                <div><label>Transmission</label> <div id="transmission">{{car.transmission}}</div></div>
+            </div>
 
-        <div  id="email" class="info">
-        <button type="submit" class="btn btn-success" >Email Owner</button>
-        <button id="faveBtn" type="submit" v-on:click="addfave" class="btn" ><img class="unfavourited" src="../assets/heart.svg"></button>
+            <div  id="email" class="info">
+                <button type="submit" class="btn btn-success" >Email Owner</button>
+                <button id="faveBtn" type="submit" v-on:click="addfave" class="btn" ><img class="unfavourited" src="../assets/heart.svg"></button>
+            </div>
         </div>
-        
     </div>
  </div>
 </template>
@@ -143,5 +146,38 @@ export default {
 .unfavourited{
     filter: grayscale(100%);
     width: 2em;
+}
+
+.car-container{
+    background-color: rgb(232, 232, 232);
+    padding:10px;
+    height: fit-content;
+    min-height: calc(100vh - 60px);
+    display: flex;
+    
+}
+.card-container{
+    margin:5vh 15%;
+    width:70%;
+    height: calc(100vh - 200px);
+    background-color: white;
+    display: flex;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0px 1px 5px 1px rgb(128, 128, 128);
+}
+.card-container .image{
+    height:100%;
+    width: 50%;
+    overflow: hidden;
+}
+.card-container .content{
+    height:100%;
+    width: 50%;
+    overflow: hidden;
+}
+.card-container img{
+    min-width: 100%;
+    min-height: 100%;
 }
 </style>

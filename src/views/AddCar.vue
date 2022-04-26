@@ -10,9 +10,8 @@ import AddCar from '@/components/AddCar.vue'
 
 
 <template>
-    <div class="form-container">
         <AddCar />
-    </div>
+
 </template>
 
 <style>

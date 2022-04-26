@@ -2,7 +2,7 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-primary fixed-top">
       <div class="container-fluid">
-        <router-link class="navbar-brand" to="/"><img alt="auto logo" class="logo" src="@/assets/icons8-car-90.png" width="30" height="30" />United Auto Sales</router-link>
+        <router-link class="navbar-brand" to="/"><img alt="auto logo" class="logo" src="@/assets/icons8-car-90.png" />United Auto Sales</router-link>
         <button
           class="navbar-toggler"
           type="button"
