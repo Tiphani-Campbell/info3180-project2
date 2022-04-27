@@ -330,7 +330,7 @@ def checkfavourite(car_id):
                 else:
                     return jsonify({"message": False}),200
    
-    return jsonify({"message": False}),401
+    return jsonify({"message": 'Invalid/missing token'}),401
 
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use
