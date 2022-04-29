@@ -319,16 +319,15 @@ def checkfavourite(car_id):
     if token:
         decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
         if decoded['sub'] == current_user.username:
-            if request.method == "GET":
-                faved= False
-                favorites = Favourite.query.all()
-                for favourite in favorites:
-                    if favourite.user_id == current_user.id  and favourite.car_id == car_id:
-                        faved = True
-                if faved:
-                    return jsonify({"message": True}),200
-                else:
-                    return jsonify({"message": False}),200
+            faved= False
+            favorites = Favourite.query.all()
+            for favourite in favorites:
+                if favourite.user_id == current_user.id  and favourite.car_id == car_id:
+                    faved = True
+            if faved:
+                return jsonify({"message": True}),200
+            else:
+                return jsonify({"message": False}),200
    
     return jsonify({"message": 'Invalid/missing token'}),401
 
